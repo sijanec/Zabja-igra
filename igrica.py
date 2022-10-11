@@ -1,7 +1,8 @@
 import math
 
-število = int(input("Vstavi število:"))
+stevilo = int(input("Vstavi število:"))
 
-x = 5*število
+petkratnik = 5*stevilo
 
-print("5*tvoje število je: ",x)
+print("5*tvoje število je: ",petkratnik)
+print(f"5x tvoje število je {petkratnik}")
