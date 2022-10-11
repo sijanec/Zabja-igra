@@ -2,6 +2,6 @@ import math
 
 število = int(input("Vstavi število:"))
 
-x = 10*število
+x = 5*število
 
-print("10*tvoje število je: " ,x)
+print("5*tvoje število je: ",x)
