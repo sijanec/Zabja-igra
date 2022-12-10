@@ -13,6 +13,19 @@ def zmanjsaj_polje(polje, list):
     return polje
 
 
+def zakleni_polja(polje, vrata):
+    for i in polje:
+        if i in vrata:
+            i.append("zaklenjeno")
+    return polje
+
+
+def odkleni_polja(polje, vrata):
+    for i in polje:
+        if "zaklenjeno" in i:
+            i.remove("zaklenjeno")
+
+
 def lovska_poteza(polje, frog_position):
     mozno = []
 
@@ -108,8 +121,8 @@ def kraljevska_pot(start, finish):
     return [start, finish]
 
 
-def shrani_game_state(game_state, muhe, poteze, frog_position, kljuc=False):
-    return game_state.append([muhe, poteze, frog_position, kljuc])
+def shrani_game_state(game_state, muhe, poteze, frog_position, varnost):
+    return game_state.append([muhe, poteze, frog_position, varnost])
 
 
 def povrni_game_state(game_state):
@@ -131,33 +144,128 @@ def povrni_frog_position(game_state):
 
 
 def povrni_kljuc(game_state):
-    return game_state[-1][3]
+    return game_state[-1][3][0]
 
 
-game_state = []
+def povrni_vrata(game_state):
+    return game_state[-1][3][1]
 
 
-prepovedano = naredi_polje(4, 4)
-frog_position = [6, 3]
-
-muhe = naredi_polje(3, 7, 1, 6)
+def povrni_odprto(game_state):
+    return game_state[-1][3][2]
 
 
-polje = naredi_polje(8, 8)
+def znakec(eno_polje, muhe, frog_position, kljuc, vrata, mozne_poteze=[False]):
+    if False in eno_polje:
+        return " "
+    if eno_polje == frog_position:
+        return "𓆏"
+    if eno_polje == kljuc:
+        return "🗝️"
+    if eno_polje in muhe:
+        return "M"
+    if "zaklenjeno" in eno_polje:
+        return "🔒"
+    if eno_polje in mozne_poteze:
+        return "▣"
+    else:
+        return "▢"
 
 
-polje = zmanjsaj_polje(polje, prepovedano)
+def visualize(polje, game_state, mozne_poteze=[False]):
+    muhe = povrni_muhe(game_state)
+    frog_position = povrni_frog_position(game_state)
+    poteze = povrni_poteze(game_state)
+    kljuc = povrni_kljuc(game_state)
+    vrata = povrni_vrata(game_state)
+    n = polje[-1][1] - polje[0][0] + 1
+    vrstica = "1 "
+    x = 0
+    for i in polje:
+        vrstica = (
+            vrstica + znakec(i, muhe, frog_position, kljuc, vrata, mozne_poteze) + " "
+        )
+        x += 1
+        if x % n == 0:
+            print(vrstica)
+            vrstica = str(x // n + 1) + " "
+    vrstica = "  "
+    for j in range(1, x // n + 1):
+        vrstica = vrstica + str(j) + " "
+    print(vrstica)
+    print("")
+    print(poteze)
 
-print("Polje: ", polje)
 
-print("Lovska poteza: ", lovska_poteza(polje, frog_position))
+def st_potez(string, poteze):
+    for i in poteze:
+        if string in i:
+            return i[1]
+    return False
 
-print("Trdnjavska poteza: ", trdnjavska_poteza(polje, frog_position))
 
-print("Damina poteza: ", damina_poteza(polje, frog_position))
+# Tukaj je potek igre
 
-print("Konjska poteza: ", konjska_poteza(polje, frog_position))
 
-print("Muhe: ", muhe)
+def igra(level):
+    polje = level[0]
+    prepovedano = level[1]
+    game_state = level[2]
 
-print("Trdnjavska pot: ", trdnjavska_pot([6, 3], [6, 7]))
+    polje = zmanjsaj_polje(polje, prepovedano)
+    vrata = povrni_vrata(game_state)
+    polje = zakleni_polja(polje, vrata)
+    konec = False
+
+    visualize(polje, game_state)
+
+    poteza = str(input("Izberi potezo: "))
+    if poteza.lower() == "nazaj":
+        game_state = povrni_game_state(game_state)
+        visualize(polje, game_state)
+        konec = True
+    konec = True
+    visualize(polje, game_state)
+
+
+polje_1 = naredi_polje(8, 8)
+prepovedano_1 = naredi_polje(4, 4)
+polje_1 = zmanjsaj_polje(polje_1, prepovedano_1)
+
+frog_position_1 = [6, 3]
+
+kljuc_1 = [8, 1]
+
+muhe_1 = naredi_polje(3, 7, 1, 6)
+
+vrata_1 = naredi_polje(8, 5, 1, 5)
+
+# poteze_1 = [["konj", 3], ["kralj", 2], ["dama", 3], ["lovec", 3], ["trdnjava", 4]]
+poteze_1 = {"konj": 3, "kralj": 2, "dama": 3, "lovec": 3, "trdnjava": 4}
+
+
+odklenjeno_1 = False
+
+varnost_1 = [kljuc_1, vrata_1, odklenjeno_1]
+
+
+game_state_1 = [[muhe_1, poteze_1, frog_position_1, varnost_1]]
+
+
+# print("Polje: ", polje)
+# print("Lovska poteza: ", lovska_poteza(polje, frog_position))
+# print("Trdnjavska poteza: ", trdnjavska_poteza(polje, frog_position))
+# print("Damina poteza: ", damina_poteza(polje, frog_position))
+# print("Konjska poteza: ", konjska_poteza(polje, frog_position))
+# print("Muhe: ", muhe)
+# print("Trdnjavska pot: ", trdnjavska_pot([6, 3], [6, 7]))
+
+# visualize(polje_1, game_state_1)
+
+
+# level = [polje, prepovedana_polja muhe, ]
+
+
+level_1 = [polje_1, prepovedano_1, game_state_1]
+
+igra(level_1)
