@@ -247,6 +247,7 @@ def igra(level):
     muhe = povrni_muhe(game_state)
     odprto = povrni_odprto(game_state)
     kljuc = povrni_kljuc(game_state)
+    pazitelj_premikov = []
     konec = False
 
     while konec == False:
@@ -254,10 +255,12 @@ def igra(level):
         poteza = str(input("Izberi potezo: ")).lower()
         if poteza == "nazaj":
             game_state = povrni_game_state(game_state)
-            slovar_funkcij_potez = povrni_poteze(game_state)
             frog_position = povrni_frog_position(game_state)
             muhe = povrni_muhe(game_state)
             odprto = povrni_odprto(game_state)
+            if pazitelj_premikov != []:
+                poteze[pazitelj_premikov[-1]] += 1
+                pazitelj_premikov.remove(pazitelj_premikov[-1])
             if odprto == False:
                 zakleni_polja(polje, vrata)
             visualize(polje, game_state)
@@ -267,11 +270,17 @@ def igra(level):
             mozne_poteze = slovar_funkcij_potez[poteza](polje, frog_position)
             visualize(polje, game_state, mozne_poteze)
             print(mozne_poteze)
-            premik = list(input("Izberi na katero polje se želiš premakniti: "))
+            premik = (
+                input("Izberi na katero polje se želiš premakniti: ")
+                .replace("[", "")
+                .replace("]", "")
+                .split(",")
+            )
             if premik[0].isnumeric() and premik[-1].isnumeric():
                 premik = [int(premik[0]), int(premik[-1])]
             if premik in mozne_poteze:
                 poteze[poteza] -= 1
+                pazitelj_premikov.append(poteza)
                 pot = slovar_funkcij_poti[poteza](frog_position, premik)
                 frog_position = premik
                 muhe = pojej_muhe(pot, muhe)
@@ -282,9 +291,7 @@ def igra(level):
                 if len(muhe) == 0:
                     konec = True
                 varnost = [kljuc, vrata, odklenjeno]
-                shrani_game_state(
-                    game_state, muhe, slovar_funkcij_potez, frog_position, varnost
-                )
+                shrani_game_state(game_state, muhe, poteze, frog_position, varnost)
             else:
                 print(mozne_poteze)
                 print("Tega ne moreš narediti!")
@@ -303,20 +310,6 @@ poteze_1 = {"konj": 3, "kralj": 2, "dama": 3, "lovec": 3, "trdnjava": 4}
 odklenjeno_1 = False
 varnost_1 = [kljuc_1, vrata_1, odklenjeno_1]
 game_state_1 = [[muhe_1, poteze_1, frog_position_1, varnost_1]]
-
-# print("Polje: ", polje)
-# print("Lovska poteza: ", lovska_poteza(polje, frog_position))
-# print("Trdnjavska poteza: ", trdnjavska_poteza(polje, frog_position))
-# print("Damina poteza: ", damina_poteza(polje, frog_position))
-# print("Konjska poteza: ", konjska_poteza(polje, frog_position))
-# print("Muhe: ", muhe)
-# print("Trdnjavska pot: ", trdnjavska_pot([6, 3], [6, 7]))
-
-# visualize(polje_1, game_state_1)
-
-
-# level = [polje, prepovedana_polja muhe, ]
-
 
 level_1 = [polje_1, prepovedano_1, game_state_1]
 

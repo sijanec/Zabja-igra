@@ -17,6 +17,9 @@ slovar = {"konj": 3, "kralj": 2, "dama": 3, "lovec": 3, "trdnjava": 4}
 
 
 print(slovar)
+abc = []
+abc.append(slovar)
+abc.append(slovar)
 print(slovar["dama"])
 slovar["dama"] -= 1
 print(slovar["dama"])
@@ -27,3 +30,5 @@ for i, j in slovar.items():
 
 for i in slovar:
     print(i, slovar[i])
+
+print(abc)
